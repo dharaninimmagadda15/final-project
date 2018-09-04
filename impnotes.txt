@@ -1,0 +1,29 @@
+To find outthe number of ports of switch
+snmpwalk -v 2c -c public 192.168.184.21 .1.3.6.1.2.1.2.1
+o/p: iso.3.6.1.2.1.2.1.0 = INTEGER: 53
+
+command to find active interfaces/ports of the switch
+snmpwalk -v 2c -c public 192.168.184.21 .1.3.6.1.2.1.2.2.1.8
+
+
+to find the interfaces of the switch
+snmpwalk -v 2c -c public 192.168.184.21 .1.3.6.1.2.1.2.2.1.6
+
+
+to get vlans information:
+snmpwalk -v 2c -c public 192.168.184.21 .1.3.6.1.2.1.17.7.1.4.3.1.1
+
+Got the vlans info like below
+
+iso.3.6.1.2.1.17.7.1.4.3.1.1.1 = STRING: "Default"
+iso.3.6.1.2.1.17.7.1.4.3.1.1.2 = STRING: "Auto VoIP"
+iso.3.6.1.2.1.17.7.1.4.3.1.1.3 = STRING: "Auto-Video"
+iso.3.6.1.2.1.17.7.1.4.3.1.1.184 = STRING: "mgnt"
+
+to get port indexes of all vlans used below command:
+snmpwalk -v 2c -c public 192.168.184.21 .1.3.6.1.2.1.17.1.4.1.2
+
+
+
+Cource used to complete the project: http://developers-club.com/posts/213247/
+
