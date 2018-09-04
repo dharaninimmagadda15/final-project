@@ -2,29 +2,30 @@ import shlex, subprocess
 import sqlite3
 from db_structure import DB_table, DB_NAME
 from time import sleep
-hostIP = "192.168.184.21"
-hostCommunity = "public"
+device_ip = "192.168.184.21"
+community = "public"
 OID_VLAN_PORT_INDEXS = ".1.3.6.1.2.1.17.7.1.2"
-command = "snmpwalk -v 2c -c %s %s"%(hostCommunity, hostIP)
-def get_output(oid):
+def get_required_info(community, device_ip, oid):
+    command = "snmpwalk -v 2c -c %s %s %s"%(community, device_ip, oid)
     res = subprocess.Popen(shlex.split(command+" %s"%oid), stdout=subprocess.PIPE)
     out, err = res.communicate()
-    return out
-def get_mac_addresses():
-    port_indexes = get_output(OID_VLAN_PORT_INDEXS)
-    mac_addresses = []
-    for i in port_indexes.splitlines():
+    req_info = []
+    for i in out.splitlines():
         i_str = str(i)
         if "INTEGER" in i_str:
-            oid_macaddress = i_str.split()[0]
-            mac_address_list = oid_macaddress.rsplit('.',6)[1:]
-            mac_addresses.append(" ".join(mac_address_list))
-    return mac_addresses
+           
+            vlan_mac,_,_,port = i_str.strip("'").split()
+            vlan_mac_list = vlan_mac.split('.')
+            mac_address = " ".join(vlan_mac_list[-6:])
+            vlan = vlan_mac_list[-7]
+            row = {"device_ip": device_ip, "vlan": vlan, "port": port,"mac_address": mac_address}
+            req_info.append(row)
+    return req_info
 
-def insert_db(mac_address):
+def insert_db(row):
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()
-    cur.execute("insert into %s values('%s')" % (DB_table, mac_address))
+    cur.execute("insert into "+DB_table+" values('%(device_ip)s','%(vlan)s','%(port)s','%(mac_address)s')" % ( row))
     con.commit()
     con.close()
 
@@ -41,16 +42,17 @@ while True:
     print ("*"*100)
     print ("probing switch for mac address")
     print ("*"*100)
-    mac_addresses = get_mac_addresses()
+    data = get_required_info(community, device_ip,  OID_VLAN_PORT_INDEXS)
+    print (data)
     print ("*"*100)
     print ("mac addresses got from switch")
     print ("*"*100)
-    print (mac_addresses)
+    print (data)
     print ("*"*100)
     print ("inserting mac addresses in to DB")
     print ("*"*100)
-    for mac_address in mac_addresses:
-        insert_db(mac_address)
+    for row in data:
+        insert_db(row)
     print ("*"*100)
     print ("insertion completed")
     print ("*"*100)
@@ -62,8 +64,4 @@ while True:
     print ("WAITING FOR 5 SECONDS")
     print ("*"*100)
     sleep(5)
-    
-    
    
-        
-    
