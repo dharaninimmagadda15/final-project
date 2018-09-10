@@ -1,6 +1,7 @@
 import shlex, subprocess
 import sqlite3
-from db_structure import DB_table, DB_NAME
+DB_NAME= "mac"
+DB_table="track"
 from time import sleep
 device_ip = "192.168.184.21"
 community = "public"
