@@ -24,6 +24,18 @@ to get port indexes of all vlans used below command:
 snmpwalk -v 2c -c public 192.168.184.21 .1.3.6.1.2.1.17.1.4.1.2
 
 
+URLS used for testing:
+create a mac folder
+http://localhost/app1/config.php
+http://localhost/app1/addDevice.php?ip=192.168.20.3&port=80&community=public&version=2c
+http://localhost/app1/listDevs.php
+http://localhost/app1/removeDevice.php?ip=192.168.20.3&port=80&community=public&version=2c
+http://localhost/app1/search.php?mac=ad 23 er 45 8%
+http://localhost/app1/list.php
 
+
+References
+https://www.w3schools.com/sql/sql_wildcards.asp
+https://www.cisco.com/c/en/us/support/docs/ip/simple-network-management-protocol-snmp/41003-catalystVLANinfo.html
 Cource used to complete the project: http://developers-club.com/posts/213247/
 
